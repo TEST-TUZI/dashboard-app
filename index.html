@@ -25,6 +25,9 @@
         .bar-emerald{background:linear-gradient(90deg,#34d399,#10b981)}
         .bar-emerald-light{background:linear-gradient(90deg,#6ee7b7,#34d399)}
         .tag-green{display:inline-flex;align-items:center;padding:2px 10px;border-radius:9999px;font-size:12px;font-weight:500;background-color:#d1fae5;color:#065f46}
+        .nowrap{white-space:nowrap}
+        .page{display:none}
+        .page.active{display:block}
     </style>
 </head>
 <body class="gradient-bg text-gray-900">
@@ -32,268 +35,339 @@
         <header class="mb-8 animate-in">
             <h1 class="text-3xl font-bold text-gray-900 mb-4">条件单运营分析平台</h1>
             <div class="flex space-x-6 border-b border-gray-200">
-                <button class="pb-3 px-1 tab-active text-sm">总览页</button>
-                <button class="pb-3 px-1 tab-inactive text-sm">策略对比</button>
+                <button class="pb-3 px-1 tab-active text-sm" onclick="switchTab('overview')">总览页</button>
+                <button class="pb-3 px-1 tab-inactive text-sm" onclick="switchTab('compare')">策略对比</button>
             </div>
         </header>
 
+        <!-- 筛选器区域 -->
         <section class="bg-white rounded-2xl p-5 mb-6 shadow-sm border border-gray-100 animate-in" style="animation-delay:0.1s">
-            <div class="grid grid-cols-12 gap-4">
-                <div class="col-span-12 lg:col-span-3">
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-4">
+                <!-- 日期 -->
+                <div class="col-span-2">
                     <label class="block text-xs text-gray-500 mb-1.5 font-medium">日期</label>
                     <div class="flex items-center space-x-2">
-                        <input type="date" value="2026-02-05" class="flex-1 w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm date-input text-gray-700">
+                        <input type="date" value="2026-02-05" class="flex-1 w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm date-input text-gray-700 h-10">
                         <span class="text-gray-400 text-sm">至</span>
-                        <input type="date" value="2026-03-06" class="flex-1 w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm date-input text-gray-700">
+                        <input type="date" value="2026-03-06" class="flex-1 w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm date-input text-gray-700 h-10">
                     </div>
                     <div class="flex mt-2 space-x-2">
                         <button class="px-3 py-1 text-xs rounded-full bg-gray-100 text-gray-600">近7天</button>
                         <button class="px-3 py-1 text-xs rounded-full bg-gray-900 text-white">近30天</button>
                     </div>
                 </div>
-                <div class="col-span-6 lg:col-span-2">
+                <!-- 策略类型 -->
+                <div class="col-span-1">
                     <label class="block text-xs text-gray-500 mb-1.5 font-medium">策略类型</label>
-                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 h-10">
                         <option>全部策略</option>
                         <option>普通条件单</option>
                         <option>网格交易</option>
                         <option>T0策略</option>
                     </select>
                 </div>
-                <div class="col-span-6 lg:col-span-2">
+                <!-- 账户类型 -->
+                <div class="col-span-1">
                     <label class="block text-xs text-gray-500 mb-1.5 font-medium">账户类型</label>
-                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 h-10">
                         <option>全部账户</option>
                         <option>普通账户</option>
                         <option>信用账户</option>
                     </select>
                 </div>
-                <div class="col-span-6 lg:col-span-2">
+                <!-- 服务用户 -->
+                <div class="col-span-1">
                     <label class="block text-xs text-gray-500 mb-1.5 font-medium">服务用户</label>
-                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 h-10">
                         <option>全部服务用户</option>
                         <option>协议客户</option>
                         <option>普通客户</option>
                     </select>
                 </div>
-                <div class="col-span-6 lg:col-span-2">
+                <!-- 渠道 -->
+                <div class="col-span-1">
                     <label class="block text-xs text-gray-500 mb-1.5 font-medium">渠道</label>
-                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 h-10">
                         <option>全部渠道</option>
                         <option>PC端</option>
                         <option>移动端</option>
                     </select>
                 </div>
-                <div class="col-span-6 lg:col-span-1">
+                <!-- 市场 -->
+                <div class="col-span-1">
                     <label class="block text-xs text-gray-500 mb-1.5 font-medium">市场</label>
-                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700">
+                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 h-10">
                         <option>全部</option>
                         <option>沪</option>
                         <option>深</option>
                     </select>
                 </div>
-            </div>
-        </section>
-
-        <section class="grid grid-cols-7 gap-4 mb-6">
-            <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.15s">
-                <div class="text-xs text-gray-500 mb-1.5 font-medium">累计协议客户总数量</div>
-                <div class="text-2xl font-bold text-gray-900 number-font mb-1">12.8万</div>
-                <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
-                <div class="mt-2 text-xs font-medium trend-up">较前一日 +128</div>
-            </div>
-            <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.2s">
-                <div class="text-xs text-gray-500 mb-1.5 font-medium">累计策略实例数量</div>
-                <div class="text-2xl font-bold text-gray-900 number-font mb-1">45.6万</div>
-                <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
-                <div class="mt-2 text-xs font-medium trend-up">较前一日 +1,240</div>
-            </div>
-            <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.25s">
-                <div class="text-xs text-gray-500 mb-1.5 font-medium">累计委托笔数</div>
-                <div class="text-2xl font-bold text-gray-900 number-font mb-1">892.5万</div>
-                <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
-                <div class="mt-2 text-xs font-medium trend-up">较前一日 +5.6万</div>
-            </div>
-            <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.3s">
-                <div class="text-xs text-gray-500 mb-1.5 font-medium">新增委托笔数</div>
-                <div class="text-2xl font-bold text-gray-900 number-font mb-1">8.4万</div>
-                <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
-                <div class="mt-2 text-xs font-medium trend-up">较前一日 +12%</div>
-            </div>
-            <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.35s">
-                <div class="text-xs text-gray-500 mb-1.5 font-medium">监控中订单笔数</div>
-                <div class="text-2xl font-bold text-gray-900 number-font mb-1">156.3万</div>
-                <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
-                <div class="mt-2 text-xs font-medium text-gray-400">较前一日 +0</div>
-            </div>
-            <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.4s">
-                <div class="text-xs text-gray-500 mb-1.5 font-medium">委托金额</div>
-                <div class="text-2xl font-bold text-gray-900 number-font mb-1">¥428.9亿</div>
-                <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
-                <div class="mt-2 text-xs font-medium trend-up">较前一日 +8.2%</div>
-            </div>
-            <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.45s">
-                <div class="text-xs text-gray-500 mb-1.5 font-medium">成交笔数</div>
-                <div class="text-2xl font-bold text-gray-900 number-font mb-1">324.1万</div>
-                <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
-                <div class="mt-2 text-xs font-medium trend-up">较前一日 +3.5%</div>
-            </div>
-        </section>
-
-        <section class="mb-6 animate-in" style="animation-delay:0.5s">
-            <div class="metric-card rounded-xl p-6 bg-gradient-to-r from-gray-50 to-white border-l-4 border-l-gray-800">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <div class="text-sm text-gray-500 mb-2 font-medium">成交金额（不含打新中签）</div>
-                        <div class="text-4xl font-bold text-gray-900 number-font tracking-tight">¥296.76亿</div>
-                        <div class="mt-2 flex items-center space-x-4">
-                            <span class="text-xs text-gray-400">当前筛选范围内汇总</span>
-                            <span class="text-xs font-medium trend-up flex items-center">
-                                <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
-                                较前一日 +5.8%
-                            </span>
-                        </div>
-                    </div>
+                <!-- 产品（新增） -->
+                <div class="col-span-1">
+                    <label class="block text-xs text-gray-500 mb-1.5 font-medium">产品</label>
+                    <select class="w-full filter-select px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-700 h-10">
+                        <option>全部产品</option>
+                        <option>股票</option>
+                        <option>基金</option>
+                        <option>可转债</option>
+                    </select>
                 </div>
             </div>
         </section>
 
-        <section class="grid grid-cols-2 gap-6 mb-6">
-            <div class="metric-card rounded-xl p-6 animate-in" style="animation-delay:0.55s">
-                <div class="mb-6">
-                    <h3 class="text-base font-bold text-gray-900">委托金额趋势</h3>
-                    <p class="text-xs text-gray-500 mt-1">看各策略委托金额贡献，识别高价值策略。</p>
+        <!-- 总览页 -->
+        <div id="overview" class="page active">
+            <!-- 指标卡片 -->
+            <section class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-6">
+                <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.15s">
+                    <div class="text-xs text-gray-500 mb-1.5 font-medium nowrap">累计协议客户总数量</div>
+                    <div class="text-2xl font-bold text-gray-900 number-font mb-1">12.8万</div>
+                    <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
+                    <div class="mt-2 text-xs font-medium trend-up">较前一日 +128</div>
                 </div>
-                <div class="space-y-4">
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-sm text-gray-600 font-medium">普通条件单</span>
-                        <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="chart-bar h-full bar-rose rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:0%" data-width="85">¥159.76亿</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-sm text-gray-600 font-medium">网格交易</span>
-                        <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="chart-bar h-full bar-rose-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:0%" data-width="65">¥41.21亿</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-sm text-gray-600 font-medium">T0策略</span>
-                        <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="chart-bar h-full bar-rose rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:0%" data-width="90">¥302.61亿</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-sm text-gray-600 font-medium">国债逆回购</span>
-                        <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="chart-bar h-full bar-rose-light rounded-full flex items-center justify-end pr-3 text-gray-700 text-xs font-medium" style="width:0%" data-width="45">¥59.81亿</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-sm text-gray-600 font-medium">新股打新</span>
-                        <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="chart-bar h-full bar-rose-light rounded-full flex items-center justify-end pr-3 text-gray-700 text-xs font-medium" style="width:0%" data-width="25">¥18.27亿</div>
-                        </div>
-                    </div>
+                <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.2s">
+                    <div class="text-xs text-gray-500 mb-1.5 font-medium nowrap">累计策略实例数量</div>
+                    <div class="text-2xl font-bold text-gray-900 number-font mb-1">45.6万</div>
+                    <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
+                    <div class="mt-2 text-xs font-medium trend-up">较前一日 +1,240</div>
                 </div>
-            </div>
+                <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.25s">
+                    <div class="text-xs text-gray-500 mb-1.5 font-medium nowrap">累计委托笔数</div>
+                    <div class="text-2xl font-bold text-gray-900 number-font mb-1">892.5万</div>
+                    <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
+                    <div class="mt-2 text-xs font-medium trend-up">较前一日 +5.6万</div>
+                </div>
+                <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.3s">
+                    <div class="text-xs text-gray-500 mb-1.5 font-medium nowrap">新增委托笔数</div>
+                    <div class="text-2xl font-bold text-gray-900 number-font mb-1">8.4万</div>
+                    <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
+                    <div class="mt-2 text-xs font-medium trend-up">较前一日 +12%</div>
+                </div>
+                <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.35s">
+                    <div class="text-xs text-gray-500 mb-1.5 font-medium nowrap">监控中订单笔数</div>
+                    <div class="text-2xl font-bold text-gray-900 number-font mb-1">156.3万</div>
+                    <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
+                    <div class="mt-2 text-xs font-medium text-gray-400">较前一日 +0</div>
+                </div>
+                <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.4s">
+                    <div class="text-xs text-gray-500 mb-1.5 font-medium nowrap">委托金额</div>
+                    <div class="text-2xl font-bold text-gray-900 number-font mb-1">¥428.9亿</div>
+                    <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
+                    <div class="mt-2 text-xs font-medium trend-up">较前一日 +8.2%</div>
+                </div>
+                <div class="metric-card rounded-xl p-4 animate-in" style="animation-delay:0.45s">
+                    <div class="text-xs text-gray-500 mb-1.5 font-medium nowrap">成交笔数</div>
+                    <div class="text-2xl font-bold text-gray-900 number-font mb-1">324.1万</div>
+                    <div class="text-xs text-gray-400">当前筛选范围内汇总</div>
+                    <div class="mt-2 text-xs font-medium trend-up">较前一日 +3.5%</div>
+                </div>
+            </section>
 
-            <div class="metric-card rounded-xl p-6 animate-in" style="animation-delay:0.6s">
-                <div class="mb-6">
-                    <h3 class="text-base font-bold text-gray-900">成交笔数对比</h3>
-                    <p class="text-xs text-gray-500 mt-1">看策略执行产出，判断策略触发后的落地能力。</p>
-                </div>
-                <div class="space-y-4">
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-sm text-gray-600 font-medium">普通条件单</span>
-                        <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="chart-bar h-full bar-emerald rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:0%" data-width="95">112.0万</div>
+            <!-- 成交金额（不含打新中签）- 不换行 -->
+            <section class="mb-6 animate-in" style="animation-delay:0.5s">
+                <div class="metric-card rounded-xl p-6 bg-gradient-to-r from-gray-50 to-white border-l-4 border-l-gray-800">
+                    <div class="flex items-center justify-between">
+                        <div class="min-w-0 flex-1">
+                            <div class="text-sm text-gray-500 mb-2 font-medium nowrap">成交金额（不含打新中签）</div>
+                            <div class="text-4xl font-bold text-gray-900 number-font tracking-tight">¥296.76亿</div>
+                            <div class="mt-2 flex items-center space-x-4">
+                                <span class="text-xs text-gray-400">当前筛选范围内汇总</span>
+                                <span class="text-xs font-medium trend-up flex items-center nowrap">
+                                    <svg class="w-3 h-3 mr-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                                    较前一日 +5.8%
+                                </span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-sm text-gray-600 font-medium">新债打新</span>
-                        <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="chart-bar h-full bar-emerald-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:0%" data-width="75">13.0万</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-sm text-gray-600 font-medium">新股打新</span>
-                        <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="chart-bar h-full bar-emerald-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:0%" data-width="70">12.4万</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-sm text-gray-600 font-medium">网格交易</span>
-                        <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="chart-bar h-full bar-emerald-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:0%" data-width="60">10.1万</div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <span class="w-24 text-sm text-gray-600 font-medium">国债逆回购</span>
-                        <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                            <div class="chart-bar h-full bar-emerald rounded-full flex items-center justify-end pr-3 text-gray-700 text-xs font-medium" style="width:0%" data-width="30">2,180</div>
+                        <div class="hidden md:flex w-12 h-12 rounded-full bg-gray-100 items-center justify-center flex-shrink-0 ml-4">
+                            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <section class="metric-card rounded-xl overflow-hidden animate-in" style="animation-delay:0.65s">
-            <div class="p-6 border-b border-gray-100">
-                <h3 class="text-base font-bold text-gray-900 mb-1">策略明细表</h3>
-                <p class="text-xs text-gray-500">同口径同时对齐新增委托、成交笔数、成功转化率和成交金额。</p>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase">策略类型</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">新增委托</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">成交笔数</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">委托转化率</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-600 uppercase">成交金额</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-gray-900">普通条件单</td>
-                            <td class="px-6 py-4 text-right number-font text-gray-700">356.0万</td>
-                            <td class="px-6 py-4 text-right number-font text-gray-700">112.0万</td>
-                            <td class="px-6 py-4 text-right"><span class="tag-green">31.5%</span></td>
-                            <td class="px-6 py-4 text-right number-font font-medium text-gray-900">¥159.76亿</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-gray-900">网格交易</td>
-                            <td class="px-6 py-4 text-right number-font text-gray-700">38.0万</td>
-                            <td class="px-6 py-4 text-right number-font text-gray-700">10.1万</td>
-                            <td class="px-6 py-4 text-right"><span class="tag-green">26.5%</span></td>
-                            <td class="px-6 py-4 text-right number-font font-medium text-gray-900">¥41.21亿</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-gray-900">T0策略</td>
-                            <td class="px-6 py-4 text-right number-font text-gray-700">3,554</td>
-                            <td class="px-6 py-4 text-right number-font text-gray-700">1,184</td>
-                            <td class="px-6 py-4 text-right"><span class="tag-green">33.3%</span></td>
-                            <td class="px-6 py-4 text-right number-font font-medium text-gray-900">¥302.61亿</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-gray-900">自动打新</td>
-                            <td class="px-6 py-4 text-right number-font text-gray-700">35.3万</td>
-                            <td class="px-6 py-4 text-right number-font text-gray-700">25.4万</td>
-                            <td class="px-6 py-4 text-right"><span class="tag-green">71.9%</span></td>
-                            <td class="px-6 py-4 text-right number-font font-medium text-gray-900">¥29.37亿</td>
-                        </tr>
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-4 font-medium text-gray-900">国债逆回购</td>
-                            <td class="px-6 py-4 text-right number-font text-gray-700">3,493</td>
-                            <td class="px-6 py-4 text-right number-font text-gray-700">2,180</td>
-                            <td class="px-6 py-4 text-right"><span class="tag-green">62.4%</span></td>
-                            <td class="px-6 py-4 text-right number-font font-medium text-gray-900">¥59.81亿</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+            <!-- 通用口径策略视图 -->
+            <section class="metric-card rounded-xl overflow-hidden animate-in" style="animation-delay:0.65s">
+                <div class="p-6 border-b border-gray-100">
+                    <h3 class="text-base font-bold text-gray-900 mb-1">通用口径策略视图</h3>
+                    <p class="text-xs text-gray-500">同口径同时对齐新增委托、成交笔数、成交金额及渠道分布。</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">策略类型</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">渠道</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">市场</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">产品</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">账户类型</th>
+                                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">服务用户</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">新增委托</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">成交笔数</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">成交金额</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">监控中订单数</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">签约人数</th>
+                                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-600 uppercase whitespace-nowrap">使用人数</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-4 font-medium text-gray-900">普通条件单</td>
+                                <td class="px-4 py-4 text-gray-700">PC端</td>
+                                <td class="px-4 py-4 text-gray-700">沪</td>
+                                <td class="px-4 py-4 text-gray-700">股票</td>
+                                <td class="px-4 py-4 text-gray-700">普通账户</td>
+                                <td class="px-4 py-4 text-gray-700">协议客户</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">356.0万</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">112.0万</td>
+                                <td class="px-4 py-4 text-right number-font font-medium text-gray-900">¥159.76亿</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">45.2万</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">8.5万</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">12.3万</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-4 font-medium text-gray-900">网格交易</td>
+                                <td class="px-4 py-4 text-gray-700">移动端</td>
+                                <td class="px-4 py-4 text-gray-700">深</td>
+                                <td class="px-4 py-4 text-gray-700">股票</td>
+                                <td class="px-4 py-4 text-gray-700">信用账户</td>
+                                <td class="px-4 py-4 text-gray-700">协议客户</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">38.0万</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">10.1万</td>
+                                <td class="px-4 py-4 text-right number-font font-medium text-gray-900">¥41.21亿</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">12.8万</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">2.1万</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">3.5万</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-4 font-medium text-gray-900">T0策略</td>
+                                <td class="px-4 py-4 text-gray-700">API</td>
+                                <td class="px-4 py-4 text-gray-700">沪</td>
+                                <td class="px-4 py-4 text-gray-700">股票</td>
+                                <td class="px-4 py-4 text-gray-700">信用账户</td>
+                                <td class="px-4 py-4 text-gray-700">协议客户</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">3,554</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">1,184</td>
+                                <td class="px-4 py-4 text-right number-font font-medium text-gray-900">¥302.61亿</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">892</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">456</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">892</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-4 font-medium text-gray-900">自动打新</td>
+                                <td class="px-4 py-4 text-gray-700">移动端</td>
+                                <td class="px-4 py-4 text-gray-700">沪/深</td>
+                                <td class="px-4 py-4 text-gray-700">股票</td>
+                                <td class="px-4 py-4 text-gray-700">普通账户</td>
+                                <td class="px-4 py-4 text-gray-700">全部用户</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">35.3万</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">25.4万</td>
+                                <td class="px-4 py-4 text-right number-font font-medium text-gray-900">¥29.37亿</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">8.9万</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">45.2万</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">52.1万</td>
+                            </tr>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-4 font-medium text-gray-900">国债逆回购</td>
+                                <td class="px-4 py-4 text-gray-700">PC端</td>
+                                <td class="px-4 py-4 text-gray-700">沪</td>
+                                <td class="px-4 py-4 text-gray-700">基金</td>
+                                <td class="px-4 py-4 text-gray-700">普通账户</td>
+                                <td class="px-4 py-4 text-gray-700">普通客户</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">3,493</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">2,180</td>
+                                <td class="px-4 py-4 text-right number-font font-medium text-gray-900">¥59.81亿</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">1,205</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">892</td>
+                                <td class="px-4 py-4 text-right number-font text-gray-700">1,456</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <!-- 策略对比页面 -->
+        <div id="compare" class="page">
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="metric-card rounded-xl p-6 animate-in">
+                    <div class="mb-6">
+                        <h3 class="text-base font-bold text-gray-900">委托金额趋势</h3>
+                        <p class="text-xs text-gray-500 mt-1">看各策略委托金额贡献，识别高价值策略。</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-sm text-gray-600 font-medium">普通条件单</span>
+                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="chart-bar h-full bar-rose rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:85%">¥159.76亿</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-sm text-gray-600 font-medium">网格交易</span>
+                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="chart-bar h-full bar-rose-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:65%">¥41.21亿</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-sm text-gray-600 font-medium">T0策略</span>
+                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="chart-bar h-full bar-rose rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:90%">¥302.61亿</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-sm text-gray-600 font-medium">国债逆回购</span>
+                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="chart-bar h-full bar-rose-light rounded-full flex items-center justify-end pr-3 text-gray-700 text-xs font-medium" style="width:45%">¥59.81亿</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-sm text-gray-600 font-medium">新股打新</span>
+                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="chart-bar h-full bar-rose-light rounded-full flex items-center justify-end pr-3 text-gray-700 text-xs font-medium" style="width:25%">¥18.27亿</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="metric-card rounded-xl p-6 animate-in">
+                    <div class="mb-6">
+                        <h3 class="text-base font-bold text-gray-900">成交笔数对比</h3>
+                        <p class="text-xs text-gray-500 mt-1">看策略执行产出，判断策略触发后的落地能力。</p>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-sm text-gray-600 font-medium">普通条件单</span>
+                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="chart-bar h-full bar-emerald rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:95%">112.0万</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-sm text-gray-600 font-medium">新债打新</span>
+                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="chart-bar h-full bar-emerald-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:75%">13.0万</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-sm text-gray-600 font-medium">新股打新</span>
+                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="chart-bar h-full bar-emerald-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:70%">12.4万</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-sm text-gray-600 font-medium">网格交易</span>
+                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="chart-bar h-full bar-emerald-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:60%">10.1万</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="w-24 text-sm text-gray-600 font-medium">国债逆回购</span>
+                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
+                                <div class="chart-bar h-full bar-emerald rounded-full flex items-center justify-end pr-3 text-gray-700 text-xs font-medium" style="width:30%">2,180</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
 
         <footer class="mt-8 text-center text-xs text-gray-400 pb-8">
             数据更新时间：2026-03-06 15:00:00 | 数据来源：交易系统
@@ -301,14 +375,20 @@
     </div>
 
     <script>
-        setTimeout(() => {
-            document.querySelectorAll('.chart-bar').forEach((bar, i) => {
-                setTimeout(() => {
-                    bar.style.width = bar.dataset.width + '%';
-                }, i * 50);
-            });
-        }, 100);
+        function switchTab(tab) {
+            const tabs = document.querySelectorAll('header button');
+            if(tab === 'overview') {
+                tabs[0].className = 'pb-3 px-1 tab-active text-sm';
+                tabs[1].className = 'pb-3 px-1 tab-inactive text-sm';
+                document.getElementById('overview').classList.add('active');
+                document.getElementById('compare').classList.remove('active');
+            } else {
+                tabs[0].className = 'pb-3 px-1 tab-inactive text-sm';
+                tabs[1].className = 'pb-3 px-1 tab-active text-sm';
+                document.getElementById('overview').classList.remove('active');
+                document.getElementById('compare').classList.add('active');
+            }
+        }
     </script>
 </body>
 </html>
-

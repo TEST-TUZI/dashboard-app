@@ -22,9 +22,9 @@
         .animate-in{animation:slideIn 0.5s ease-out forwards}
         .bar-rose{background:linear-gradient(90deg,#fb7185,#f43f5e)}
         .bar-rose-light{background:linear-gradient(90deg,#fda4af,#fb7185)}
-        .bar-emerald{background:linear-gradient(90deg,#34d399,#10b981)}
-        .bar-emerald-light{background:linear-gradient(90deg,#6ee7b7,#34d399)}
-        .tag-green{display:inline-flex;align-items:center;padding:2px 10px;border-radius:9999px;font-size:12px;font-weight:500;background-color:#d1fae5;color:#065f46}
+        .bar-emerald{background:linear-gradient(90deg,#7dd3c0,#5fb3a3)}
+        .bar-emerald-light{background:linear-gradient(90deg,#a8e6cf,#7dd3c0)}
+        .tag-green{display:inline-flex;align-items:center;padding:2px 10px;border-radius:9999px;font-size:12px;font-weight:500;background-color:#e0f2f1;color:#4a7c76}
         .tag-blue{display:inline-flex;align-items:center;padding:2px 8px;border-radius:9999px;font-size:11px;font-weight:500;background-color:#dbeafe;color:#1e40af}
         .nowrap{white-space:nowrap}
         .page{display:none}
@@ -32,6 +32,7 @@
         .section-title{text-align:left}
         .sub-text{font-size:10px;color:#9ca3af}
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="gradient-bg text-gray-900">
     <div class="max-w-[1600px] mx-auto p-6">
@@ -409,82 +410,84 @@
 
         <!-- 策略对比页面 -->
         <div id="compare" class="page">
+            <!-- 第一行：折线图 + 饼图 -->
             <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
                 <div class="metric-card rounded-xl p-6 animate-in">
-                    <div class="mb-6">
+                    <div class="mb-4">
                         <h3 class="text-base font-bold text-gray-900">委托金额趋势</h3>
-                        <p class="text-xs text-gray-500 mt-1">看各策略委托金额贡献，识别高价值策略。</p>
+                        <p class="text-xs text-gray-500 mt-1">近30天各策略委托金额变化趋势</p>
                     </div>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4">
-                            <span class="w-32 text-sm text-gray-600 font-medium">定价买入</span>
-                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="chart-bar h-full bar-rose rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:85%">¥28.5亿</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="w-32 text-sm text-gray-600 font-medium">成交驱动网格</span>
-                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="chart-bar h-full bar-rose-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:65%">¥41.21亿</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="w-32 text-sm text-gray-600 font-medium">T0策略</span>
-                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="chart-bar h-full bar-rose rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:95%">¥302.61亿</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="w-32 text-sm text-gray-600 font-medium">逆回购自动下单</span>
-                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="chart-bar h-full bar-rose-light rounded-full flex items-center justify-end pr-3 text-gray-700 text-xs font-medium" style="width:45%">¥59.81亿</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="w-32 text-sm text-gray-600 font-medium">智能打新</span>
-                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="chart-bar h-full bar-rose-light rounded-full flex items-center justify-end pr-3 text-gray-700 text-xs font-medium" style="width:25%">¥29.37亿</div>
-                            </div>
-                        </div>
+                    <div class="h-64">
+                        <canvas id="trendChart"></canvas>
                     </div>
                 </div>
 
                 <div class="metric-card rounded-xl p-6 animate-in">
-                    <div class="mb-6">
-                        <h3 class="text-base font-bold text-gray-900">成交笔数对比</h3>
-                        <p class="text-xs text-gray-500 mt-1">看策略执行产出，判断策略触发后的落地能力。</p>
+                    <div class="mb-4">
+                        <h3 class="text-base font-bold text-gray-900">策略类型分布</h3>
+                        <p class="text-xs text-gray-500 mt-1">各策略委托金额占比</p>
                     </div>
-                    <div class="space-y-4">
-                        <div class="flex items-center gap-4">
-                            <span class="w-32 text-sm text-gray-600 font-medium">定价买入</span>
-                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="chart-bar h-full bar-emerald rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:75%">12.8万</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="w-32 text-sm text-gray-600 font-medium">成交驱动网格</span>
-                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="chart-bar h-full bar-emerald-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:60%">10.1万</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="w-32 text-sm text-gray-600 font-medium">智能打新</span>
-                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="chart-bar h-full bar-emerald-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:90%">25.4万</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="w-32 text-sm text-gray-600 font-medium">逆回购自动下单</span>
-                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="chart-bar h-full bar-emerald rounded-full flex items-center justify-end pr-3 text-gray-700 text-xs font-medium" style="width:30%">2,180</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <span class="w-32 text-sm text-gray-600 font-medium">T0策略</span>
-                            <div class="flex-1 h-8 bg-gray-100 rounded-full overflow-hidden">
-                                <div class="chart-bar h-full bar-emerald-light rounded-full flex items-center justify-end pr-3 text-white text-xs font-medium" style="width:50%">1,184</div>
-                            </div>
-                        </div>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第二行：柱状图 + 横向条形图 -->
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="metric-card rounded-xl p-6 animate-in">
+                    <div class="mb-4">
+                        <h3 class="text-base font-bold text-gray-900">渠道数据对比</h3>
+                        <p class="text-xs text-gray-500 mt-1">各渠道委托金额与成交笔数对比</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="channelChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="metric-card rounded-xl p-6 animate-in">
+                    <div class="mb-4">
+                        <h3 class="text-base font-bold text-gray-900">策略执行效率</h3>
+                        <p class="text-xs text-gray-500 mt-1">委托金额 vs 成交金额转化率</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="efficiencyChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第三行：面积图 -->
+            <section class="mb-6">
+                <div class="metric-card rounded-xl p-6 animate-in">
+                    <div class="mb-4">
+                        <h3 class="text-base font-bold text-gray-900">用户增长趋势</h3>
+                        <p class="text-xs text-gray-500 mt-1">近30天协议客户与策略实例增长趋势</p>
+                    </div>
+                    <div class="h-72">
+                        <canvas id="growthChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 第四行：雷达图 + 散点图 -->
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                <div class="metric-card rounded-xl p-6 animate-in">
+                    <div class="mb-4">
+                        <h3 class="text-base font-bold text-gray-900">策略综合能力评估</h3>
+                        <p class="text-xs text-gray-500 mt-1">多维度评估各策略表现</p>
+                    </div>
+                    <div class="h-64 flex items-center justify-center">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="metric-card rounded-xl p-6 animate-in">
+                    <div class="mb-4">
+                        <h3 class="text-base font-bold text-gray-900">金额-笔数分布</h3>
+                        <p class="text-xs text-gray-500 mt-1">各策略委托金额与笔数相关性分析</p>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="scatterChart"></canvas>
                     </div>
                 </div>
             </section>
@@ -508,34 +511,30 @@
                 tabs[1].className = 'pb-3 px-1 tab-active text-sm';
                 document.getElementById('overview').classList.remove('active');
                 document.getElementById('compare').classList.add('active');
+                setTimeout(initCharts, 100);
             }
         }
 
-        // 筛选联动功能
         function updateSubFilters() {
             const channel = document.getElementById('filter-channel').value;
             const market = document.getElementById('filter-market').value;
             const product = document.getElementById('filter-product').value;
             
-            // 更新T0策略显示
             document.getElementById('t0-channel').textContent = channel;
             document.getElementById('t0-market').textContent = market;
             document.getElementById('t0-product').textContent = product;
             
-            // 更新自动平仓显示
             document.getElementById('auto-channel').textContent = channel;
             document.getElementById('auto-market').textContent = market;
             document.getElementById('auto-product').textContent = product;
         }
         
-        // 日期范围切换功能
         function setDateRange(days) {
             const btn7 = document.getElementById('btn-7days');
             const btn30 = document.getElementById('btn-30days');
             const dateEnd = document.getElementById('date-end');
             const dateStart = document.getElementById('date-start');
             
-            // 更新按钮样式
             if (days === 7) {
                 btn7.classList.remove('bg-gray-100', 'text-gray-600');
                 btn7.classList.add('bg-gray-900', 'text-white');
@@ -548,7 +547,6 @@
                 btn7.classList.add('bg-gray-100', 'text-gray-600');
             }
             
-            // 计算日期
             const end = new Date();
             const start = new Date();
             start.setDate(end.getDate() - days);
@@ -562,6 +560,322 @@
             const month = String(date.getMonth() + 1).padStart(2, '0');
             const day = String(date.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
+        }
+
+        let charts = {};
+        
+        function initCharts() {
+            Object.values(charts).forEach(chart => chart.destroy());
+            charts = {};
+
+            const trendCtx = document.getElementById('trendChart');
+            if (trendCtx) {
+                charts.trend = new Chart(trendCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['03-01', '03-02', '03-03', '03-04', '03-05', '03-06'],
+                        datasets: [{
+                            label: '定价买入',
+                            data: [28.5, 29.2, 28.8, 30.1, 29.5, 28.5],
+                            borderColor: '#fb7185',
+                            backgroundColor: 'rgba(251, 113, 133, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: '成交驱动网格',
+                            data: [40.2, 41.5, 40.8, 42.1, 41.8, 41.21],
+                            borderColor: '#7dd3c0',
+                            backgroundColor: 'rgba(125, 211, 192, 0.15)',
+                            tension: 0.4,
+                            fill: true
+                        }, {
+                            label: 'T0策略',
+                            data: [295.3, 298.5, 300.2, 301.8, 302.1, 302.61],
+                            borderColor: '#60a5fa',
+                            backgroundColor: 'rgba(96, 165, 250, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { boxWidth: 12, font: { size: 11 } }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { callback: value => '¥' + value + '亿' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const pieCtx = document.getElementById('pieChart');
+            if (pieCtx) {
+                charts.pie = new Chart(pieCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['T0策略', '成交驱动网格', '逆回购', '智能打新', '定价买入', '其他'],
+                        datasets: [{
+                            data: [302.61, 41.21, 59.81, 29.37, 28.5, 45],
+                            backgroundColor: [
+                                '#60a5fa',
+                                '#7dd3c0',
+                                '#fbbf24',
+                                '#fb7185',
+                                '#a78bfa',
+                                '#9ca3af'
+                            ],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: { boxWidth: 12, font: { size: 11 } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const channelCtx = document.getElementById('channelChart');
+            if (channelCtx) {
+                charts.channel = new Chart(channelCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['新涨乐', '涨乐财富通', 'PC', '全球通'],
+                        datasets: [{
+                            label: '委托金额(亿)',
+                            data: [185.3, 156.8, 45.2, 41.5],
+                            backgroundColor: '#fb7185',
+                            borderRadius: 4
+                        }, {
+                            label: '成交笔数(万)',
+                            data: [125.6, 98.3, 32.1, 68.1],
+                            backgroundColor: '#7dd3c0',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { boxWidth: 12, font: { size: 11 } }
+                            }
+                        },
+                        scales: {
+                            y: { beginAtZero: true }
+                        }
+                    }
+                });
+            }
+
+            const efficiencyCtx = document.getElementById('efficiencyChart');
+            if (efficiencyCtx) {
+                charts.efficiency = new Chart(efficiencyCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['定价买入', '成交驱动网格', '智能打新', '逆回购', 'T0策略'],
+                        datasets: [{
+                            label: '委托金额',
+                            data: [28.5, 41.21, 29.37, 59.81, 302.61],
+                            backgroundColor: '#fb7185',
+                            borderRadius: 4
+                        }, {
+                            label: '成交金额',
+                            data: [26.8, 38.5, 28.9, 58.2, 298.4],
+                            backgroundColor: '#7dd3c0',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        indexAxis: 'y',
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { boxWidth: 12, font: { size: 11 } }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                ticks: { callback: value => '¥' + value + '亿' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const growthCtx = document.getElementById('growthChart');
+            if (growthCtx) {
+                charts.growth = new Chart(growthCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['03-01', '03-02', '03-03', '03-04', '03-05', '03-06'],
+                        datasets: [{
+                            label: '协议客户(万)',
+                            data: [12.5, 12.6, 12.7, 12.75, 12.78, 12.8],
+                            borderColor: '#60a5fa',
+                            backgroundColor: 'rgba(96, 165, 250, 0.2)',
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y'
+                        }, {
+                            label: '策略实例(万)',
+                            data: [44.2, 44.8, 45.1, 45.3, 45.5, 45.6],
+                            borderColor: '#7dd3c0',
+                            backgroundColor: 'rgba(125, 211, 192, 0.2)',
+                            fill: true,
+                            tension: 0.4,
+                            yAxisID: 'y1'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { boxWidth: 12, font: { size: 11 } }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: '协议客户(万)' }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: { display: true, text: '策略实例(万)' },
+                                grid: { drawOnChartArea: false }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const radarCtx = document.getElementById('radarChart');
+            if (radarCtx) {
+                charts.radar = new Chart(radarCtx, {
+                    type: 'radar',
+                    data: {
+                        labels: ['委托金额', '成交笔数', '用户活跃度', '成功率', '收益率', '稳定性'],
+                        datasets: [{
+                            label: 'T0策略',
+                            data: [95, 45, 85, 90, 88, 92],
+                            borderColor: '#60a5fa',
+                            backgroundColor: 'rgba(96, 165, 250, 0.2)',
+                            pointBackgroundColor: '#60a5fa'
+                        }, {
+                            label: '成交驱动网格',
+                            data: [65, 70, 75, 85, 72, 88],
+                            borderColor: '#7dd3c0',
+                            backgroundColor: 'rgba(125, 211, 192, 0.2)',
+                            pointBackgroundColor: '#7dd3c0'
+                        }, {
+                            label: '智能打新',
+                            data: [50, 95, 90, 98, 95, 85],
+                            borderColor: '#fb7185',
+                            backgroundColor: 'rgba(251, 113, 133, 0.2)',
+                            pointBackgroundColor: '#fb7185'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { boxWidth: 12, font: { size: 11 } }
+                            }
+                        },
+                        scales: {
+                            r: {
+                                beginAtZero: true,
+                                max: 100,
+                                ticks: { stepSize: 20 }
+                            }
+                        }
+                    }
+                });
+            }
+
+            const scatterCtx = document.getElementById('scatterChart');
+            if (scatterCtx) {
+                charts.scatter = new Chart(scatterCtx, {
+                    type: 'scatter',
+                    data: {
+                        datasets: [{
+                            label: '定价买入',
+                            data: [{x: 28.5, y: 45.2}],
+                            backgroundColor: '#fb7185'
+                        }, {
+                            label: '成交驱动网格',
+                            data: [{x: 41.21, y: 38.0}],
+                            backgroundColor: '#7dd3c0'
+                        }, {
+                            label: '智能打新',
+                            data: [{x: 29.37, y: 35.3}],
+                            backgroundColor: '#fbbf24'
+                        }, {
+                            label: '逆回购',
+                            data: [{x: 59.81, y: 3.5}],
+                            backgroundColor: '#60a5fa'
+                        }, {
+                            label: 'T0策略',
+                            data: [{x: 302.61, y: 1.2}],
+                            backgroundColor: '#a78bfa'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { boxWidth: 12, font: { size: 11 } }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: context => {
+                                        return context.dataset.label + ': 金额¥' + context.parsed.x + '亿, 笔数' + context.parsed.y + '万';
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: { display: true, text: '委托金额(亿)' },
+                                ticks: { callback: value => '¥' + value + '亿' }
+                            },
+                            y: {
+                                title: { display: true, text: '委托笔数(万)' }
+                            }
+                        }
+                    }
+                });
+            }
         }
     </script>
 </body>
